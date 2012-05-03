@@ -12,6 +12,8 @@
 \usepackage{comment}
 \usepackage{url}
 
+\usepackage{subfigure}
+
 \begin{document}
 
 \date{}
@@ -21,18 +23,95 @@
 
 \bibliographystyle{plainnat}
 
-\section{Basic Idea}
+\section{Learning from Heuristically Labeled Training Data}
+Many learning tasks require a large volume of annotated data; manual annotation of which is often costly or infeasible in practice.
+In many scenarios there exists some external source of information which is very informative in predicting the target concept, but
+can only be exploited in special circumstances (e.g. for specific entities in a database, or retrospectively in time).
+To exploit these ``weak'' supervision signals, there has been a long history of research on heuristics for automatically annotating training data
+for a wide variety of different tasks \citep{Agichtein01,Carlson10,Weld09,mintz09}.
+A high level graphical model representation of this process of heuristically labeling training data for learning is presented in figure \ref{heuristic}.
+
+In most cases there is a certain amount of ambiguity inherent in the labeling process.  For example a sentence mentioning ``Amazon''
+may refer to either the {\sl COMPANY}, or the {\sl LOCATION}.  Most current approaches would deterministically label such
+sentences with one label or the other, leading to noisy training data.
+A better approach is to preserve the ambiguity inherent in training data automatically generated in this way, as illustrated
+in Figure \ref{dlvm_train}.
+
+\begin{figure}
+  \centering
+  \subfigure[Training]{
+    \includegraphics{supervised_train.pdf}
+  }
+  \subfigure[Testing]{
+    \includegraphics{supervised_test.pdf}
+  }
+  \caption{{\bf Supervised Learning}.  First parameters $\theta$ are learned when $x$ and $y$ are both observed.  Learned
+  parameters are then used to infer $P(y|x)$ during testing.}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \subfigure[Labeling]{
+    \includegraphics{heuristic_label.pdf}
+  }
+  \subfigure[Training]{
+    \includegraphics{heuristic_train.pdf}
+  }
+  \subfigure[Testing]{
+    \includegraphics{heuristic_test.pdf}
+  }
+  \caption{{\bf Learning With Heuristically Labeled Training Data}.  $y$ is first labeled based on $x$ and a set of heuristics, $\mathcal{H}$.  Training
+  and testing then proceed in the same way as supervised learning.}
+  \label{heuristic}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{unsupervised_train.pdf}
+  \caption{{\bf Unsupervised Learning}.  Neither $y$ nor $\theta$ are ever observed.  Both are inferred based on $x$.}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{dlvm_train.pdf}
+  \caption{{\bf Learning with Heuristics as Constraints}.  Like the unsupervised case, both $y$ and $\theta$ are hidden (never observed),
+  but heuristics are used to constrain the hypothesis space, (possible values of $\theta$).}
+  \label{dlvm_train}
+\end{figure}
+
 
 \section{Applications}
+The following sections describe several instances of this approach to specific applications.
 
-\subsection{Named Entity Classification}
+\subsection{Named Entity Classification \citep{Ritter11}}
+To heuristically generate training data for named entity classification, we use large dictionaries of entities gathered
+from Freebase.  In many cases, an entity will be ambiguous, taking different types in different contexts (e.g. the ``Amazon'' example above).
 
-\subsection{Information Extraction}
+Each entity is modeled as a mixture of types, where the set of types associated with each entity is constrained based on the Freebase dictionaries.
+The latent variables model the type of each individual entity mention in context.
+
+This approach was shown to outperform the co-training approach of Collins and Singer, in addition to a supervised baseline in an evaluation
+of named entity categorization on Twitter.
+
+\subsection{Distantly Supervised Information Extraction}
+Here we can take a very similar approach to that described for Named Entity Classification.  Each pair of entities can be modeled
+as a mixture of relations, for example (\emph{Steve Jobs}, \emph{Apple}) would be modeled as a mixture of the relations 
+\{{\sl ceoOf}, {\sl founder}, ...\}.
+
+The latent variables model the relation mentioned in each sentence.
+
+The work by \cite{Hoffmann11} is very relevant here, as they present a probabilistic graphical model for capturing
+both aggregate and local extraction decisions.  Their approach is based on a discriminative model in contrast to the generative model
+proposed here.
 
 \subsection{Temporal Reference Resolution}
+The idea here is to model temporal references using a constrained HMM.  Each sentence mentioning an event will be associated with a unique date
+on which the event takes place.  The sequence of words in the sentence will be modeled using a constrained HMM, where the probability of transitioning
+into a state not associated with the date of the event is set to 0.
+
+Here the latent variables model whether each word is part of a temporal expression and what date properties they are associated with if so.
 
 \section{Related Work}
-
 
 
 \bibliography{bib}
