@@ -37,6 +37,49 @@ sentences with one label or the other, leading to noisy training data.
 A better approach is to preserve the ambiguity inherent in training data automatically generated in this way, as illustrated
 in Figure \ref{dlvm_train}.
 
+\section{Relationship to Multiple Instance Learning}
+Another established learning setup for modeling noisy / heuristically generated training data which was originally developed for 
+a problem in drug design is \emph{Multiple Instance Learning}.  Clearly MIL is strongly related to the approach presented in Figure
+\ref{dlvm_train}, however I believe it's assumptions are
+not appropriate for modeling heuristically generated data in every situation.
+
+\subsection{Example}
+To demonstrate that at least MIL, and \emph{Multi-Labeled Learning} make different assumptions about the data, consider the following simple example:
+\begin{description}
+  \item[\bf Dictionaries]:
+    \begin{itemize}
+      \item {\sc Company}: \{Apple, Amazon, Microsoft, etc...\}
+      \item {\sc Location}: \{Amazon, Sahara, Mexico, Seattle, etc...\}
+      \item {\sc Food}: \{Apple, Bananna, Taco, Burrito, etc...\}
+    \end{itemize}
+  \item[\bf Sentences]:
+    \begin{itemize}
+      \item {\bf Apple} acquired Siri.
+      \item {\bf Amazon} acquired Kiva.
+    \end{itemize}
+\end{description}
+
+\subsubsection{Representation using Multiple Instance Learning}
+Using MIL, we might represent this noisily labeled training data using the following \emph{positive bags}
+\begin{itemize}
+  \item \{({\bf Apple} acquired Siri., {\sc Company})\}
+  \item \{({\bf Apple} acquired Siri., {\sc Food})\}
+  \item \{({\bf Amazon} acquired Siri., {\sc Company})\}
+  \item \{({\bf Apple} acquired Siri., {\sc Location})\}
+\end{itemize}
+Note that two out of the 4 bags contain no positive examples, thus violating the assumptions made by MIL.
+
+Alternatively, we could re-arrange the data into bags as follows:
+\begin{itemize}
+  \item \{({\bf Apple} acquired Siri., {\sc Company}),
+    ({\bf Apple} acquired Siri., {\sc Food})\}
+  \item \{({\bf Amazon} acquired Siri., {\sc Company}),
+    ({\bf Apple} acquired Siri., {\sc Location})\}
+\end{itemize}
+Now it is true that each bag contains at least one positive instance, but note that MIL assumes each positive
+bag contains \emph{one or more positive example}, when in fact a more appropriate assumption
+in this circumstance is that each positive bag contains \emph{exactly one} postivie example.
+
 \begin{figure}
   \centering
   \subfigure[Training]{
@@ -83,6 +126,32 @@ in Figure \ref{dlvm_train}.
 \section{Applications}
 The following sections describe several instances of this approach to specific applications.
 
+
+\subsection{Entity Cateogirzation}
+\begin{description}
+\item[Input:] Entity Mentions + Freebase Dictionaries
+\item[Latent Variables:] Model the type of each entity
+\item[Graphical model:] Latent Dirichlet Allocation (parameters constrained by Freebase Dictionaries)
+\item[Empirical Results:] Outperforms Supervised Baseline (~2000 annotated tweets) and Co-Training.
+\end{description}
+
+\subsection{Relation Extraction}
+\begin{description}
+\item[Input:] Entity Pair Mentions + Freebase Relations
+\item[Latent Variables:] Model the relation mentioned between each pair of entities
+\item[Graphical Model:] Latent Dirichlet Allocation (parameters constrained by Freebase Relations)
+\item[Empirical Results:] None
+\end{description}
+
+\subsection{Temporal Reference Resoluation}
+\begin{description}
+\item[Input:] Sentences + Significant Events
+\item[Latent Variables:] Model whether each word is part of a temporal expression and if so, what date property it refers to (e.g. MONTH=May, DOM=24, DOW=Thursday, etc...)
+\item[Graphical Model:] Hidden Markov Model (parameters constrained by properties of the date associated with the mentioned event).
+\item[Empirical Results:] None
+\end{description}
+
+\begin{comment}
 \subsection{Named Entity Classification \citep{Ritter11}}
 To heuristically generate training data for named entity classification, we use large dictionaries of entities gathered
 from Freebase.  In many cases, an entity will be ambiguous, taking different types in different contexts (e.g. the ``Amazon'' example above).
@@ -112,6 +181,7 @@ into a state not associated with the date of the event is set to 0.
 Here the latent variables model whether each word is part of a temporal expression and what date properties they are associated with if so.
 
 \section{Related Work}
+\end{comment}
 
 
 \bibliography{bib}
