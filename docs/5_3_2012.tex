@@ -151,6 +151,28 @@ The following sections describe several instances of this approach to specific a
 \item[Empirical Results:] None
 \end{description}
 
+\section{Relaxing the Closed World Assumption}
+One assumption we have been making so far is that for each instance, at least one label generated according to the heuristics $\mathcal{H}$ is correct.
+To relax this assumption one option would be a generative model of facts stated in the database (or heuristics) and the text, as illustrated in
+Figure \ref{generative}.
+
+The truth ($\mathcal{T}$) of each possible ground fact $f$ could be modeled with a latent variable.  The probability of each fact being observed
+as part of the heuristic labels $\mathcal{H}$ would depend on whether the fact is true or false:
+
+$$
+P(d|f) = \left\{ \begin{array}{rl}
+ 0.5 &\mbox{ if $f=\text{true}$} \\
+ 0   &\mbox{ if $f=\text{fale}$}
+       \end{array} \right.
+$$
+
+\begin{figure}
+  \centering
+  \includegraphics{generative.pdf}
+  \caption{{\bf Relaxing the Closed World Assumption}}
+  \label{generative}
+\end{figure}
+
 \begin{comment}
 \subsection{Named Entity Classification \citep{Ritter11}}
 To heuristically generate training data for named entity classification, we use large dictionaries of entities gathered
