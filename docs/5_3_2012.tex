@@ -50,7 +50,7 @@ To demonstrate that at least MIL, and \emph{Multi-Labeled Learning} make differe
     \begin{itemize}
       \item {\sc Company}: \{Apple, Amazon, Microsoft, etc...\}
       \item {\sc Location}: \{Amazon, Sahara, Mexico, Seattle, etc...\}
-      \item {\sc Food}: \{Apple, Bananna, Taco, Burrito, etc...\}
+      \item {\sc Food}: \{Apple, Banana, Taco, Burrito, etc...\}
     \end{itemize}
   \item[\bf Sentences]:
     \begin{itemize}
@@ -78,7 +78,7 @@ Alternatively, we could re-arrange the data into bags as follows:
 \end{itemize}
 Now it is true that each bag contains at least one positive instance, but note that MIL assumes each positive
 bag contains \emph{one or more positive example}, when in fact a more appropriate assumption
-in this circumstance is that each positive bag contains \emph{exactly one} postivie example.
+in this circumstance is that each positive bag contains \emph{exactly one} positive example.
 
 \begin{figure}
   \centering
@@ -127,7 +127,7 @@ in this circumstance is that each positive bag contains \emph{exactly one} posti
 The following sections describe several instances of this approach to specific applications.
 
 
-\subsection{Entity Cateogirzation}
+\subsection{Entity Categorization}
 \begin{description}
 \item[Input:] Entity Mentions + Freebase Dictionaries
 \item[Latent Variables:] Model the type of each entity
@@ -143,7 +143,7 @@ The following sections describe several instances of this approach to specific a
 \item[Empirical Results:] None
 \end{description}
 
-\subsection{Temporal Reference Resoluation}
+\subsection{Temporal Reference Resolution}
 \begin{description}
 \item[Input:] Sentences + Significant Events
 \item[Latent Variables:] Model whether each word is part of a temporal expression and if so, what date property it refers to (e.g. MONTH=May, DOM=24, DOW=Thursday, etc...)
@@ -162,7 +162,7 @@ as part of the heuristic labels $\mathcal{H}$ would depend on whether the fact i
 $$
 P(d|f) = \left\{ \begin{array}{rl}
  0.5 &\mbox{ if $f=\text{true}$} \\
- 0   &\mbox{ if $f=\text{fale}$}
+ 0   &\mbox{ if $f=\text{false}$}
        \end{array} \right.
 $$
 
