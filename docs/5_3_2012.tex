@@ -31,6 +31,18 @@ To exploit these ``weak'' supervision signals, there has been a long history of 
 for a wide variety of different tasks \citep{Agichtein01,Carlson10,Weld09,mintz09}.
 A high level graphical model representation of this process of heuristically labeling training data for learning is presented in figure \ref{heuristic}.
 
+\begin{figure}
+  \centering
+  \subfigure[Training]{
+    \includegraphics{supervised_train.pdf}
+  }
+  \subfigure[Testing]{
+    \includegraphics{supervised_test.pdf}
+  }
+  \caption{{\bf Supervised Learning}.  First parameters $\theta$ are learned when $x$ and $y$ are both observed.  Learned
+  parameters are then used to infer $P(y|x)$ during testing.}
+\end{figure}
+
 In most cases there is a certain amount of ambiguity inherent in the labeling process.  For example a sentence mentioning ``Amazon''
 may refer to either the {\sl COMPANY}, or the {\sl LOCATION}.  Most current approaches would deterministically label such
 sentences with one label or the other, leading to noisy training data.
@@ -79,18 +91,6 @@ Alternatively, we could re-arrange the data into bags as follows:
 Now it is true that each bag contains at least one positive instance, but note that MIL assumes each positive
 bag contains \emph{one or more positive example}, when in fact a more appropriate assumption
 in this circumstance is that each positive bag contains \emph{exactly one} positive example.
-
-\begin{figure}
-  \centering
-  \subfigure[Training]{
-    \includegraphics{supervised_train.pdf}
-  }
-  \subfigure[Testing]{
-    \includegraphics{supervised_test.pdf}
-  }
-  \caption{{\bf Supervised Learning}.  First parameters $\theta$ are learned when $x$ and $y$ are both observed.  Learned
-  parameters are then used to infer $P(y|x)$ during testing.}
-\end{figure}
 
 \begin{figure}
   \centering
