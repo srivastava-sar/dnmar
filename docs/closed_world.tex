@@ -1,0 +1,52 @@
+\documentclass[12pt]{article}
+
+\newcommand{\E}[1]{{\mathbf{E}[#1]}}
+\newcommand{\Prob}[1]{{\mathbf{Pr}[#1]}}
+\newcommand{\ProbSub}[2]{{\mathbf{Pr}_{#1}[#2]}}
+\newcommand{\Var}[1]{{\mathbf{Var}[#1]}}
+\newcommand{\Cov}[1]{{\mathbf{Cov}[#1]}}
+
+\usepackage[authoryear,round]{natbib}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{comment}
+\usepackage{url}
+
+\usepackage{subfigure}
+
+\begin{document}
+
+\date{}
+\title{Modeling Distant Supervision and Heuristically Generated Training Data with Latent Variables}
+\author{}
+\maketitle
+
+\bibliographystyle{plainnat}
+
+\section{Challenge}
+\begin{description}
+  \item[{\bf Incomplete Databases}]:
+    \begin{itemize}
+    \item Information is often missing from databases (e.g. the list of cities in Freebase might be incomplete).
+    \item This leads to misleading training data, for example supposing \emph{Amazon} is listed as a {\sl COMPANY},
+      but not a {\sl LOCATION}, the sentence \emph{I am flying to the Amazon} would be mis-labeled as referring
+      to a {\sl company}.
+    \end{itemize}
+  \item[{\bf Missing Entries} (\emph{Semi-Supervised Distant Supervision)]:
+    \begin{itemize}
+      \item Many items (e.g. entities, or entity-pairs) will not appear at all in the database
+      \item If we are sufficently confident, extractions involving these entities should be treated as if they were added to the database
+        and used for futher Distant Supervision.
+        %TODO: Example
+    \end{itemize}
+\end{description}
+
+\section{Solution: Relax the Closed World Assumption}
+To address both of these challenges, I believe we should investigate an approach based a generative model of both the text and the database which
+preserves ambiguity over which facts are correct/incorrect rather than assuming all facts in the database are true, and all facts not in the database
+are false (closed world assumption).
+
+\subsection{Background: Current Approach}
+
+
+\subsection{Proposed Approach}
