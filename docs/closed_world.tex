@@ -23,7 +23,7 @@
 
 \bibliographystyle{plainnat}
 
-\section{Challenge}
+\section{Challenges}
 \begin{description}
   \item[{\bf Incomplete Databases}]:
     \begin{itemize}
@@ -47,15 +47,33 @@ preserves ambiguity over which facts are correct/incorrect rather than assuming 
 are false (closed world assumption).
 
 \subsection{Background: Previous Approach}
-In previous work \cite{Ritter11}, we proposed an approach to distant supervision based on a Bayesian Network (Latent Dirichlet Allocation) representation of our data
+In previous work \citep{Ritter11}, we proposed an approach to distant supervision based on a Bayesian Network (Latent Dirichlet Allocation) representation of our data
 in connection with a set of constraints on it's parameters.  More specifically:
 \begin{itemize}
   \item We investigated weakly supervised named entity classification (e.g. input=extracted named entities and contexts + database, output=model and classification of named entities)
-  \item Entities are modeled as mixtures of types (analogy from topic modeling: entities $\rightarrow$ documents, contexts $\rightarrow$ words, types $\rightarrow$ words.
+  \item Entities are modeled as mixtures of types (analogy from topic modeling: entities $\rightarrow$ documents, contexts $\rightarrow$ words, types $\rightarrow$ words.)
   \item The set of possible types for each entity are constrained based on it's possible types according to a set of mutually exclusive dictionaries gathered from Freebase.
 \end{itemize}
 
+\begin{figure}
+  \centering
+  \includegraphics{llda.pdf}
+  \caption{{\bf Distant Supervision With Topic Models}.  Mentions $M$ of entity $E$ are modeled as a mixture over types $\theta_E$.  The set of possible types
+  for each entity is constrained by facts $f$ which relate to that entity.  Contexts $c$ are drawn from the multinomial, $\beta_{z_i}$ associated with type $z_i=T$.}
+  \label{llda}
+\end{figure}
+
+Figure \ref{llda} presents a graphical model representation of this story for the data.
+
+
 \subsection{Proposed Approach}
+
+\begin{figure}
+  \centering
+  \includegraphics{glda.pdf}
+  \caption{{\bf Distant Supervision Without the Closed World Assumption}.  Now parameters $\theta$ are constrained by hidden variables $g$.  Observed facts in the database
+    are also conditioned on $g$.  See Figure \ref{llda} for additional details.}
+\end{figure}
 
 \bibliography{bib}
 \end{document}
