@@ -35,15 +35,15 @@
   \item[{\bf Missing Entries} (\emph{Semi-Supervised Distant Supervision})]:
     \begin{itemize}
       \item Many items (e.g. entities, or entity-pairs) will not appear at all in the database
-      \item If we are sufficently confident, extractions involving these entities should be treated as if they were added to the database
-        and used for futher Distant Supervision.
+      \item If we are sufficiently confident, extractions involving these entities should be treated as if they were added to the database
+        and used for further Distant Supervision.
         %TODO: Example
     \end{itemize}
 \end{description}
 
 \section{Solution}
 To address both of these challenges, I believe we should investigate an approach based a generative model of both the text and the database which
-preserves ambiguity over which facts are correct/incorrect rather than assuming all facts in the database are true, and all facts not in the database
+preserves ambiguity over which facts are true/false rather than assuming all facts in the database are true, and all facts not in the database
 are false (closed world assumption).
 
 \subsection{Background: Previous Approach}
@@ -51,7 +51,7 @@ In previous work \citep{Ritter11}, we proposed an approach to distant supervisio
 in connection with a set of constraints on it's parameters.  More specifically:
 \begin{itemize}
   \item We investigated weakly supervised named entity classification (e.g. input=extracted named entities and contexts + database, output=model and classification of named entities)
-  \item Entities are modeled as mixtures of types (analogy from topic modeling: entities $\rightarrow$ documents, contexts $\rightarrow$ words, types $\rightarrow$ words.)
+  \item Entities are modeled as mixtures of types (analogy from topic modeling: entities $\rightarrow$ documents, contexts $\rightarrow$ words, types $\rightarrow$ topics.)
   \item The set of possible types for each entity are constrained based on it's possible types according to a set of mutually exclusive dictionaries gathered from Freebase.
 \end{itemize}
 
@@ -67,6 +67,20 @@ Figure \ref{llda} presents a graphical model representation of this story for th
 
 
 \subsection{Proposed Approach}
+To avoid assuming facts not contained in the database are false, consider the following approach:
+
+\begin{itemize}
+  \item Introduce a hidden variable $g$ for each possible fact (including those not found in the database)
+  \item Constrain the parameters $\theta$ based on the $g$'s instead of directly on the observed facts in the database.
+  \item Model the probability of facts observed in the database conditioned on $g$.
+\end{itemize}
+
+The first part (constraining $\theta$ based on $g$) is the same as before.  The distribution $P(f|g)$ could be modeled as follows:
+\begin{itemize}
+  \item If $g$ is false, then $P(f|g) = 0$
+  \item Otherwise $P(f|g) = \gamma$ where $\gamma$ could be a dictionary dependent parameter (e.g. it makes sense that some dictionaries have better coverage than others).
+    For example, we are unlikely to extract any new Egyptian Pharaohs, but we are likely to identify new Movies, Athletes, etc...
+\end{itemize}
 
 \begin{figure}
   \centering
@@ -74,6 +88,10 @@ Figure \ref{llda} presents a graphical model representation of this story for th
   \caption{{\bf Distant Supervision Without the Closed World Assumption}.  Now parameters $\theta$ are constrained by hidden variables $g$.  Observed facts in the database
     are also conditioned on $g$.  See Figure \ref{llda} for additional details.}
 \end{figure}
+
+\subsection{Inference}
+Inference will become slightly more complicated in this model, because when the $g$ variables are re-sampled, some of the $z_i$'s may need to be changed
+in order to preserve the constraints.  I believe the sampling should be relatively straightforward to accomplish in this fashion using an appropriate proposal distribution.
 
 \bibliography{bib}
 \end{document}
