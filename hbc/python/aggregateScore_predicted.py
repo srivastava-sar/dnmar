@@ -73,8 +73,8 @@ for line in open('predictions.out'):
         continue
 
     #print pDist(predicted[0], dCounts)
-    for p in [predictions[0]]:
-    #for p in predictions:
+    #for p in [predictions[0]]:
+    for p in predictions:
         sortedPredictions.append({'prob':p['prob'], 'probMentioned':p['probMentioned'], 'correct':("%s\t%s" % (entry, p['c'])) in dictionaries})
         #sortedPredictions.append({'prob':p['prob'], 'correct':("%s\t%s" % (entry, p['c'])) in dictionaries})
 
