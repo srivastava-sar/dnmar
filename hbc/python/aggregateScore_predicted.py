@@ -11,8 +11,14 @@ import os
 import re
 import math
 
+from optparse import OptionParser
+
 id2dict = {}
 dict2id = {}
+
+parser = OptionParser()
+parser.add_option("--predictionsFile", dest='predictionsFile', default='predictions.out')
+(options, args) = parser.parse_args()
 
 def logExpSum(v):
     b = max(v)
@@ -46,7 +52,7 @@ fp = 0.0
 
 sortedPredictions = []
 
-for line in open('predictions.out'):
+for line in open(options.predictionsFile):
     fields = line.strip().split('\t')
     entry  = fields[0]
     nWords = int(fields[1])
@@ -60,13 +66,6 @@ for line in open('predictions.out'):
     predictions = [x for x in predictions if not re.search(r'^GC', x['c'])]
 
     for p in predictions:
-        ###############
-        #logExpSum doesn't work with subtraction...?
-        ###############
-        #pNotMentioned  = logExpSum([math.log(1), -p['prob']])
-        #pNotMentionedN = nWords * pNotMentioned
-        #pMentionedOnce = logExpSum([math.log(1), -pNotMentionedN])
-        #p['probMentioned'] = pMentionedOnce
         p['probMentioned'] = 1.0 - math.pow((1.0 - math.exp(p['prob'])), nWords)
 
     if len(predictions) == 0:
@@ -82,10 +81,11 @@ tp = 0.0
 fp = 0.0
 
 prevPRF = None
-#for p in sorted(sortedPredictions, lambda a,b: cmp(b['prob'], a['prob'])):
-for p in sorted(sortedPredictions, lambda a,b: cmp(b['probMentioned'], a['probMentioned'])):
+for p in sorted(sortedPredictions, lambda a,b: cmp(b['prob'], a['prob'])):
+#for p in sorted(sortedPredictions, lambda a,b: cmp(b['probMentioned'], a['probMentioned'])):
     #print p
     if p['correct']:
+        #print "correct:" + str(p)
         tp += 1.0
     else:
         fp += 1.0
@@ -98,7 +98,6 @@ for p in sorted(sortedPredictions, lambda a,b: cmp(b['probMentioned'], a['probMe
         if P > 0 and R > 0:
             PRF = "%s\t%s\t%s" % (P,R,(2 * P * R / (P + R)))
             if prevPRF != None or prevPRF != PRF:
-                print p['probMentioned']
                 print PRF
                 prevPRF = PRF
 

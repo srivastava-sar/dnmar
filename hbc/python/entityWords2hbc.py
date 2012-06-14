@@ -24,6 +24,7 @@ parser.add_option("--maxEntities", dest="maxEntities", default=None)
 parser.add_option("--vocab", dest="vocab", default=None)
 parser.add_option("--dictDir", dest="dictDir", default='/homes/gws/aritter/twitter_nlp/data/LabeledLDA_dictionaries')
 parser.add_option("--dictFile", dest="dictFile", default='dict')
+parser.add_option("--entityWords", dest="entityWords", default='entity_feature')
 (options, args) = parser.parse_args()
 
 d2i = {}
@@ -52,11 +53,19 @@ if not options.useNoDict:
     fNoDictOut = open('noDictOut', 'w')
     fNoDictOutLabels = open('noDictOutLabels', 'w')
     fNoDictOutEntities = open('noDictOutEntities', 'w')
+
+#First pass, count the number of words
+wordCounts = {}
+for line in open(options.entityWords):
+    line = line.rstrip('\n')
+    (entity, word) = line.split('\t')
+    wordCounts[word] = wordCounts.get(word, 0.0) + 1.0
     
 prevEntity = None
 words = []
 nEntities = 0
-for line in sys.stdin:
+#for line in sys.stdin:
+for line in open(options.entityWords):
     line = line.rstrip('\n')
     (entity, word) = line.split('\t')
 
@@ -75,17 +84,23 @@ for line in sys.stdin:
             break
         nEntities += 1
 
+        ##############################################################################
+        # NOTE: just removed a bunch of this stuff which is probably inappropriate for
+        # this setup...
+        ##############################################################################
+        words = [x for x in words if wordCounts[x] > 1]
+
         #Filter out stopwords, numbers and punctuation
-        words = [x for x in words if (x[0] != 't') or not (x.split('=')[1] in stop_list or re.match(r'[^A-Za-z]+', x.split('=')[1]))]
+        #words = [x for x in words if (x[0] != 't') or not (x.split('=')[1] in stop_list or re.match(r'[^A-Za-z]+', x.split('=')[1]))]
         #sys.stderr.write(str(words) + "\n")
 
-        if not options.useWords:
-            words = [x for x in words if x[0] != 't']
+        #if not options.useWords:
+        #    words = [x for x in words if x[0] != 't']
 
         #limit of maxWords words per doc
-        if options.maxWords > 0:
-            random.shuffle(words)
-            words = words[0:int(options.maxWords)]
+        #if options.maxWords > 0:
+        #    random.shuffle(words)
+        #    words = words[0:int(options.maxWords)]
 
         ###############################################################################
         # Include entities which don't appear in any dictionary?

@@ -21,6 +21,8 @@ parser.add_option("--vocab", dest='vocab', default='vocab')
 parser.add_option("--dictionaries", dest='dictionaries', default='dictionaries')
 parser.add_option("--entityTopic", dest='entityTopic', default='entity-topic')
 parser.add_option("--labels", dest='labels', default=None)
+parser.add_option("--trainLabels", dest='trainLabels', default=None)
+parser.add_option("--trainDocs", dest='trainDocs', default=None)
 (options, args) = parser.parse_args()
 
 #Read in dictionaries
@@ -51,16 +53,34 @@ for line in open(options.entityTopic):
 topicWord = {}
 topicTotals = {}
 N = 0.0
-for line in open(options.topicWord):
-    fields = line.rstrip('\n').split('\t')
-    tid = int(fields[0])
-    topicWord[tid] = {}
-    for wc in fields[1:]:
-        (word, count) = re.search(r"(.*):([0-9]+)", wc).groups()
-        count = float(count)
-        topicWord[tid][word] = count
-        topicTotals[tid] = topicTotals.get(tid, 0.0) + count
-        N += count
+if options.trainLabels:
+    #Read in counts directly off data (no inference)
+    dIn = open(options.trainDocs)
+    for line in open(options.trainLabels):
+        line = line.strip()
+        labels = [int(x) for x in line.split(' ')]
+        words = [int(x) for x in dIn.readline().rstrip('\n').split(' ')]
+    for k in range(1,len(labels)+1):
+        if not topicWord.has_key(k):
+            topicWord[k]   = {}
+            topicTotals[k] = 0.0
+        if labels[k-1] == 1:
+            for w in words:
+                topicWord[k][w] = topicWord[k].get(w, 0.0) + 1.0
+                topicTotals[k] += 1
+                N += 1
+else:
+    #Read from inferred topic distributions
+    for line in open(options.topicWord):
+        fields = line.rstrip('\n').split('\t')
+        tid = int(fields[0])
+        topicWord[tid] = {}
+        for wc in fields[1:]:
+            (word, count) = re.search(r"(.*):([0-9]+)", wc).groups()
+            count = float(count)
+            topicWord[tid][word] = count
+            topicTotals[tid] = topicTotals.get(tid, 0.0) + count
+            N += count
 
 vocab = Vocab(options.vocab)
 
