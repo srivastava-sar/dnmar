@@ -1,0 +1,58 @@
+\documentclass[12pt]{article}
+
+\newcommand{\E}[1]{{\mathbf{E}[#1]}}
+\newcommand{\Prob}[1]{{\mathbf{Pr}[#1]}}
+\newcommand{\ProbSub}[2]{{\mathbf{Pr}_{#1}[#2]}}
+\newcommand{\Var}[1]{{\mathbf{Var}[#1]}}
+\newcommand{\Cov}[1]{{\mathbf{Cov}[#1]}}
+
+\usepackage[authoryear,round]{natbib}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{comment}
+\usepackage{url}
+
+\usepackage{subfigure}
+
+\begin{document}
+
+\date{}
+\title{Modeling Missing Data in Distant Supervision}
+\author{}
+\maketitle
+
+\bibliographystyle{plainnat}
+
+\section{List of variables}
+
+\begin{center}
+\begin{tabular}{|c|p{4in}|}
+\hline
+$(e_1,e_2)$ & Entity pair \\
+\hline
+$\mathbf{x}^{(e_1,e_2)}_i$ & (Observed) features for mention $i$ of pair $(e_1,e_2)$ \\
+\hline
+$z^{(e_1,e_2)}_i$ & (Hidden) relation expressed in mention $i$ or {\tt NIL} if no relation is expressed (categorical) \\
+\hline
+$r^{(e_1,e_2)}_k$ & (Partially Observed) variable indicating whether relation $k$ holds between $e_1$ and $e_2$. \\
+\hline
+$o^{(e_1,e_2)}_k$ & (Observed) variable indicating whether $r^{(e_1,e_2)}_k$ is observed or hidden. \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Conditional Likelihood}
+\begin{eqnarray*}
+  P(\mathbf{z}, \mathbf{r}, \mathbf{o}|\mathbf{x},\theta,\psi,\gamma) & = & \prod_{(e_1,e_2)} \left[ \prod_i \left[ P(z^{(e_1,e_2)}_i|\mathbf{x}^{(e_1,e_2)}_i;\theta) \right] \prod_{k} \left[P(r^{(e_1,e_2)}_k|\mathbf{z};\psi) P(o^{(e_1,e_2)}_k|r^{(e_1,e_2)}_k;\gamma) \right] \right]\\
+\end{eqnarray*}
+
+\section{Parameter Updates}
+
+\begin{eqnarray*}
+  \frac{\partial}{\partial \theta_i} \mathcal{L}(\theta:\mathcal{D}) & = & \mathbf{E}_{P(\mathbf{z},\mathbf{r}_{\text{hidden}}|\mathbf{r}_{\text{observed}}, \mathbf{o}, \mathbf{x})}[f_i] - \mathbf{E}_{P(\mathbf{z},\mathbf{r}_{\text{hidden}}, \mathbf{r}_{\text{observed}}, \mathbf{o} | \mathbf{x})}[f_i] \\
+\end{eqnarray*}
+
+\section{Observation Model}
+
+\bibliography{bib}
+\end{document}
